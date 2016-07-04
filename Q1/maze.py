@@ -73,6 +73,10 @@ def solve():
 		
 def createTree(maze):
 	height = len(maze)
+	if height:
+		width = len(maze[0])
+	else:
+		width = 0
 	width = len(maze[0]) if height else 0
 	tree = {(x, y): [] for y in range(width) for x in range(height) if not maze[x][y]}
 	for x, y in tree.keys():
@@ -83,20 +87,25 @@ def createTree(maze):
 			tree[(x, y + 1)].append(("L", (x,y)))
 			tree[(x,y)].append(("R", (x, y + 1)))
 	return tree
-	
+
 #BFS
 def breadthFirst(start, end, tree):
-	queue = deque([("", start)]) #(current node, [array for path])
+	queue = deque([(start, "")]) #(current node, [array for path])
 	visited = set()
 	tree = createTree(start, end, maze)
 	while queue:
-		(current, path) = queue.pop(0)
-		for nextnode in maze[current] - set(path):
-			if nextnode == goalnode:
-				yield path + [nextnode]
-			else:
-				queue.append((next, path + [next]))
-
+		(current, path) = queue.popleft()
+		if current == end:
+			break
+		if current in visited:
+			continue
+		visited.add(current)
+		for dir, relative in maze[current]:
+			queue.append((neighbour, path + dir))
+	print("Breadth First Traversal")
+	print("Visited: " + visited)
+	print("Path: " + path)
+	
 #DFS
 def depthFirst(start, goal, maze):
 	stack = deque([("", start)]) #(current node, [array for path])
@@ -110,7 +119,7 @@ def depthFirst(start, goal, maze):
 			continue
 		visited.add(current)
 		for direct, neighbor in tree[current]:
-			stack.append((path + direct, neighbor))
+			stack.append((neighbor, path + dir))
 	print("Depth First Traversal")
 	print("Visited: " + visited)
 	print("Path: " + path)
