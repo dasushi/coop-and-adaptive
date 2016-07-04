@@ -4,6 +4,8 @@
 #heuristic: manhattan distance to goal?
 #create tree with empty connections where there is a 0
 #root node is start point, end points are leaves
+
+from heapq import heappop, heappop
 class MazeNode(object):
 	def __init__(self, initial_value=0):
 		self.value = initial_value
@@ -45,6 +47,7 @@ maze = {{1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1},
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1},
 		{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1}}
 		
+# Main 
 def solve():
 	for int i in range(0,3):
 		#start to E1
@@ -62,7 +65,8 @@ def solve():
 		breadthFirst(tree)
 		depthFirst(tree)
 		aStar(tree)
-		
+
+# Maze to Graph 		
 def createTree(start1, start2, end1, end2, maze):
 	rootnode = maze[start1][start2]
 	
@@ -91,4 +95,22 @@ def depthFirst(tree):
 	return visited
 
 #A*
-def aStar(tree):
+def aStar(start, goal, maze):
+	queue = []
+	heappush(queue, (0 + heuristic(start, goal), 0, "", start))
+	visited = set()
+	graph = createTree(maze)
+	while queue:
+		_, cost, path, current = heappop(queue)
+		if current == goal:
+			return path
+		if current in visited:
+			continue
+		visited.add(current)
+		for direct, neighbor in graph[current]:
+			heappush(queue, (cost+ heuristic(neighbor, goal), cost + 1, path + direct, neighbor))
+	
+
+
+def heuristic(cell, goal):
+	return 10 * (abs(cell[0] - goal[0]) + abs(cell[1] - goal[1]))
