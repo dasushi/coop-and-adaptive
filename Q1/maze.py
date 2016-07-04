@@ -103,7 +103,7 @@ def depthFirst(start, goal, maze):
 	while stack:
 		(current, path) = stack.pop()
 		if current == goal:
-			return path
+			break
 		if current in visited:
 			continue
 		visited.add(current)
@@ -122,7 +122,7 @@ def aStar(start, goal, maze):
 	while queue:
 		_, cost, path, current = heappop(queue)
 		if current == goal:
-			return path
+			break
 		if current in visited:
 			continue
 		visited.add(current)
