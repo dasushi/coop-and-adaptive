@@ -94,16 +94,21 @@ def breadthFirst(start, end, tree):
 				yield path + [nextnode]
 			else:
 				queue.append((next, path + [next]))
+
 #DFS
-def depthFirst(tree):
-	stack = [(start, [start])] #(current node, [array for path])
+def depthFirst(start, goal, maze):
+	stack = deque([("", start)]) #(current node, [array for path])
+	visited = set()
+	tree = createTree(maze)
 	while stack:
 		(current, path) = stack.pop()
-		for nextnode in maze[current] - set(path):
-			if nextnode == goalnode:
-				yield path + [next]
-			else:
-				stack.append((next, path + [next]))
+		if current == goal:
+			return path
+		if current in visited:
+			continue
+		visited.add(current)
+		for direct, neighbor in tree[current]:
+			stack.append((path + direct, neighbor))
 	return visited
 
 #A*
@@ -111,7 +116,7 @@ def aStar(start, goal, maze):
 	queue = []
 	heappush(queue, (0 + heuristic(start, goal), 0, "", start))
 	visited = set()
-	graph = createTree(maze)
+	tree = createTree(maze)
 	while queue:
 		_, cost, path, current = heappop(queue)
 		if current == goal:
@@ -119,7 +124,7 @@ def aStar(start, goal, maze):
 		if current in visited:
 			continue
 		visited.add(current)
-		for direct, neighbor in graph[current]:
+		for direct, neighbor in tree[current]:
 			heappush(queue, (cost+ heuristic(neighbor, goal), cost + 1, path + direct, neighbor))
 	
 
