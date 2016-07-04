@@ -6,19 +6,7 @@
 
 
 from heapq import heappop, heappop
-
-class MazeNode(object):
-	def __init__(self, initial_value=0):
-		self.value = initial_value
-	def __init__(self, x, y):
-		if maze[x][y+1]==1 
-			self.up = new MazeNode(x,y+1)	
-		if maze[x][y-1]==1
-			self.down = new MazeNode(x,y-1)	
-		if maze[x-1][y]==1
-			self.left = new MazeNode(x-1,y)	
-		if maze[x+1][y]==1
-			self.right = new MazeNode(x+1,y)
+from collections import deque
 			
 	
 #root node is start point, end points are leaves	
@@ -51,7 +39,7 @@ maze = [[1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1],
 		
 # Main 
 def solve():
-	for int i in range(0,3):
+	for i in range(3):
 		#start to E1
 		start = (2, 11)
 		e1 = (22, 19)
@@ -81,9 +69,9 @@ def createTree(maze):
 	tree = {(x, y): [] for y in range(width) for x in range(height) if not maze[x][y]}
 	for x, y in tree.keys():
 		if not maze[x + 1][y] and x < height - 1:
-			tree[(x + 1, y)].append(("U", (row, col))
+			tree[(x + 1, y)].append(("U", (x, y)))
 			tree[(x, y)].append(("D", (x + 1, y)))
-		if not maze[x][y + 1] and y < width - 1:
+		if y < width - 1 and not maze[x][y + 1]:
 			tree[(x, y + 1)].append(("L", (x,y)))
 			tree[(x,y)].append(("R", (x, y + 1)))
 	return tree
@@ -92,7 +80,7 @@ def createTree(maze):
 def breadthFirst(start, end, tree):
 	queue = deque([(start, "")]) #(current node, [array for path])
 	visited = set()
-	tree = createTree(start, end, maze)
+	tree = createTree(maze)
 	while queue:
 		(current, path) = queue.popleft()
 		if current == end:
@@ -100,8 +88,10 @@ def breadthFirst(start, end, tree):
 		if current in visited:
 			continue
 		visited.add(current)
-		for dir, relative in maze[current]:
-			queue.append((neighbour, path + dir))
+		import pdb
+		pdb.set_trace()
+		for direct, relative in tree[current]:
+			queue.append((neighbour, path + direct))
 	print("Breadth First Traversal")
 	print("Visited: " + visited)
 	print("Path: " + path)
@@ -147,3 +137,6 @@ def aStar(start, goal, maze):
 
 def heuristic(cell, goal):
 	return 10 * (abs(cell[0] - goal[0]) + abs(cell[1] - goal[1]))
+
+
+solve()
