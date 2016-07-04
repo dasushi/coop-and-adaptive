@@ -109,7 +109,9 @@ def depthFirst(start, goal, maze):
 		visited.add(current)
 		for direct, neighbor in tree[current]:
 			stack.append((path + direct, neighbor))
-	return visited
+	print("Depth First Traversal")
+	print("Visited: " + visited)
+	print("Path: " + path)
 
 #A*
 def aStar(start, goal, maze):
@@ -126,7 +128,10 @@ def aStar(start, goal, maze):
 		visited.add(current)
 		for direct, neighbor in tree[current]:
 			heappush(queue, (cost+ heuristic(neighbor, goal), cost + 1, path + direct, neighbor))
-	
+	print("A* Algorithm")
+	print("Cost: " + cost)
+	print("Path: " + path)
+	print("Visited: " + visited)
 
 
 def heuristic(cell, goal):
