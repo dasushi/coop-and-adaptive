@@ -15,11 +15,12 @@ import random
 
 legal_moves = {(x, y): [] for x in range(-1, 2) for y in range(-1, 2) if (x,y) != (0,0)}
 	
-
+#Test if a move is legal, based on the board limits
 def check_legal(board, new_move):
-	return new_move[0] >= 0 and new_move[1] >= 0 and \
-	new_move[0] < len(board) and new_move[1] < len(board)
-	
+	return new_move[0] >= 0 and new_move[1] >= 0 and \ 		#check if the move is within 
+	new_move[0] < len(board) and new_move[1] < len(board) 	#the limits of the board
+
+#Rate a possible move based on the state of the board
 def evaluation(board, player_pos, opp_pos):
 	total = 0
 	for x, y in player_pos:
@@ -35,25 +36,52 @@ def evaluation(board, player_pos, opp_pos):
 				
 	return total
 	
-def move(board, before, after, stones, player, number)
-	count_before = board[before[0]][before[1]]
-	if number > 0:
-		if count_before < number:
-			number = count_before
+def move(board, pos_before, pos_after, stones, player, count)
+	count_pos_before = board[pos_before[0]][pos_before[1]]
+	if count > 0:
+		if count_pos_before < count:
+			count = count_pos_before
 		
-		if board[after[0]][after[1]][0] == player:
-			board[after[0]][after[1]][1] += number
+		if board[pos_after[0]][pos_after[1]][0] == player:
+			board[pos_after[0]][pos_after[1]][1] += count
 		else:
-			board[after[0]][after[1]][0] = color
-			board[after[0]][after[1]][1] = number
-		stones.add(after)
+			board[pos_after[0]][pos_after[1]][0] = color
+			board[pos_after[0]][pos_after[1]][1] = count
+		stones.add(pos_after)
 		
-		board[before[0]][before[1]][1] <= 0:
-			board[before[0]][before[1]][0] = None
-			board[before[0]][before[1]][1] = 0
-			if before in stones:
-				stones.remove(before)
+		if board[pos_before[0]][pos_before[1]][1] <= 0:
+			board[pos_before[0]][pos_before[1]][0] = None
+			board[pos_before[0]][pos_before[1]][1] = 0
+			if pos_before in stones:
+				stones.remove(pos_before)
 			
-		return number > 0
+		return count > 0
 	return False
 	
+def random_move(board, player, player_pos, opp_pos):
+	random_moves = random.sample(player_pos, len(player_pos))
+	for x, y in random_moves:
+		random.shuffle(legal_moves)
+		
+		for move in legal_moves:
+			initial_move = (x + move[0], y + move[1])
+			count = board[x][y][1]
+			if check_legal(board, initial_move) and initial_move not in opp_pos:
+				new_move = (initial_move[0] + move[0], initial_move[1] + move[1])
+				if new_move in opp_pos or not(check_legal(board, new_move)):
+					return move(board, (x,y), initial_move, count, player_pos, player)
+				else:
+					final_move = (new_pos[0] + move[0], new_pos[1] + move[1])
+					if final_move in opp_pos or not(check_legal(board, final_move)):
+						return move(board, (x,y), initial_move, 1, player_pos, player) or \
+							move(board, (x,y), new_move, num - 1, player_pos, player)
+					else:
+						return move(board, (x,y), initial_move, 1, player_pos, player) or \
+							move(board, (x,y), new_move, 2, player_pos, player) or \
+							move(board, (x,y), final_move, num - 3, player_pos, player)
+	return False
+	
+def find_best_child(board, player_pos, opp_pos, max):
+	new_max = float("inf")
+	
+	return new_max
