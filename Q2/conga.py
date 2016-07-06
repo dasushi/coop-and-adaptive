@@ -21,6 +21,7 @@ def check_legal(board, new_move):
 	new_move[0] < len(board) and new_move[1] < len(board) 	#the limits of the board
 
 #Rate a possible move based on the state of the board
+#number of moves for player - number of moves for opponent
 def evaluation(board, player_pos, opp_pos):
 	total = 0
 	for x, y in player_pos:
@@ -84,4 +85,60 @@ def random_move(board, player, player_pos, opp_pos):
 def find_best_child(board, player_pos, opp_pos, max):
 	new_max = float("inf")
 	
+	for x, y in opp_pos:
+		for move in legal_moves:
+			initial_move = (x + move[0], y + move[1])
+			
+			if check_legal(board, initial_move) and initial_move not in player_pos:
+				possible_moves = set(opp_pos)
+				possible_moves.add(initial_move)
+				
+				next_move = (initial_move[0] + move[0], initial_move[1] + move[1])
+				if next_move not in player_pos and check_legal(board, next_move):
+					possible_moves.add(next_move)
+					final_move = (next_move[0] + move[0], next_move[1] + move[1])
+					if final_move not in player_pos and check_legal(board, final_move):
+						possible_moves.add(final_move)
+				value = evaluation(board, player_pos, opp_pos)
+				if value < max: 
+					return value
+				if value < new_max:
+					new_max = value
+		
 	return new_max
+	
+def best_legal_move(board, player, opponent, player_pos, opp_pos):
+	current_best = []
+	value = -1*float("inf")
+	for x,y in player_pos:
+		for move in legal_moves:
+			initial_move = (x + move[0], y + move[1])
+			total_move = []
+			
+			if check_legal(board, initial_move) and initial_move not in player_pos:
+				total_move.append(initial_move)
+				total_move.append((x,y))
+				possible_moves = set(opp_pos)
+				possible_moves.add(initial_move)
+				
+				next_move = (initial_move[0] + move[0], initial_move[1] + move[1])
+				
+				if next_move not in player_pos and check_legal(board, next_move):
+					total_move.append(next_move)
+					possible_moves.add(next_move)
+					
+					final_move = (next_move[0] + move[0], next_move[1] + move[1])
+					
+					if final_move not in player_pos and check_legal(board, final_move):
+						total_move.append(final_move)
+						possible_moves.add(final_move)
+				new_value = find_best_child(board, possible_moves, opp_pos, value)
+				if new_value >= value:
+					current_best = total_move
+					value =  new_value
+	if current_best.empty(0:
+		return False
+	else:
+		count = board[current_best[0][0]][current_best[0][1]][1]
+		if len(current_best) == 2:
+			return move(board, current_best, count, player_pos, color)
