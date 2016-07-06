@@ -13,12 +13,13 @@
 
 import random
 
-legal_moves = {(x, y): [] for x in range(-1, 2) for y in range(-1, 2) if (x,y) != (0,0)}
+legal_moves = [[x, y] for x in range(-1, 2) for y in range(-1, 2) if (x,y) != (0,0)]
 	
 #Test if a move is legal, based on the board limits
 def check_legal(board, new_move):
-	return new_move[0] >= 0 and new_move[1] >= 0 and \ 		#check if the move is within 
-	new_move[0] < len(board) and new_move[1] < len(board) 	#the limits of the board
+	#check if the move is within the limits of the board
+	return new_move[0] >= 0 and new_move[1] >= 0 and \
+	new_move[0] < len(board) and new_move[1] < len(board)
 
 #Rate a possible move based on the state of the board
 #number of moves for player - number of moves for opponent
@@ -37,7 +38,7 @@ def evaluation(board, player_pos, opp_pos):
 				
 	return total
 	
-def move(board, pos_before, pos_after, stones, player, count)
+def move(board, pos_before, pos_after, stones, player, count):
 	count_pos_before = board[pos_before[0]][pos_before[1]]
 	if count > 0:
 		if count_pos_before < count:
@@ -72,7 +73,7 @@ def random_move(board, player, player_pos, opp_pos):
 				if new_move in opp_pos or not(check_legal(board, new_move)):
 					return move(board, (x,y), initial_move, count, player_pos, player)
 				else:
-					final_move = (new_pos[0] + move[0], new_pos[1] + move[1])
+					final_move = (new_move[0] + move[0], new_move[1] + move[1])
 					if final_move in opp_pos or not(check_legal(board, final_move)):
 						return move(board, (x,y), initial_move, 1, player_pos, player) or \
 							move(board, (x,y), new_move, num - 1, player_pos, player)
@@ -82,7 +83,7 @@ def random_move(board, player, player_pos, opp_pos):
 							move(board, (x,y), final_move, num - 3, player_pos, player)
 	return False
 	
-def find_best_child(board, player_pos, opp_pos, max):
+def find_best_value(board, player_pos, opp_pos, max):
 	new_max = float("inf")
 	
 	for x, y in opp_pos:
@@ -107,7 +108,7 @@ def find_best_child(board, player_pos, opp_pos, max):
 		
 	return new_max
 	
-def best_legal_move(board, player, opponent, player_pos, opp_pos):
+def find_best_move(board, player, opponent, player_pos, opp_pos):
 	current_best = []
 	value = -1*float("inf")
 	for x,y in player_pos:
@@ -132,13 +133,42 @@ def best_legal_move(board, player, opponent, player_pos, opp_pos):
 					if final_move not in player_pos and check_legal(board, final_move):
 						total_move.append(final_move)
 						possible_moves.add(final_move)
-				new_value = find_best_child(board, possible_moves, opp_pos, value)
+				new_value = find_best_value(board, possible_moves, opp_pos, value)
 				if new_value >= value:
 					current_best = total_move
 					value =  new_value
-	if current_best.empty(0:
+	if not current_best:
 		return False
 	else:
+		move_length = len(current_best)
 		count = board[current_best[0][0]][current_best[0][1]][1]
-		if len(current_best) == 2:
-			return move(board, current_best, count, player_pos, color)
+		if move_length == 2:
+			return move(board, current_best[0], current_best[1], count, player_pos, color)
+		elif move_length == 3:
+			return move(board, current_best[0], current_best[1], 1, player_pos, color) or \
+				   move(board, current_best[0], current_best[2], count - 1, player_pos, color)
+		elif move_length == 4:
+			return move(board, current_best[0], current_best[1], 1, player_pos, color) or \
+				   move(board, current_best[0], current_best[2], 2, player_pos, color) or \
+				   move(board, current_best[0], current_best[3], count - 3, player_pos, color)
+	return False
+	
+player_1_pos = set()
+player_2_pos = set()
+board = [[[None, 0] for x in range(4)] for y in range (4)]
+board[0][3] = ["Black", 10]
+board[3][0] = ["White", 10]
+player_1_pos.add((0,3))
+player_2_pos.add((3,0))
+turn = 0
+while(random_move(board, "Black", player_1_pos, player_2_pos)):
+	if(find_best_move(board, "White", "Black", player_2_pos, player_1_pos)):
+		print "Making a move"
+	else:
+		break
+	turn+=1
+print(player_1_pos)
+print(player_2_pos)	
+print("Turns it took: " + turn)
+	
+	
