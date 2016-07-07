@@ -13,13 +13,14 @@
 
 import random
 
-legal_moves = [[x, y] for x in range(-1, 2) for y in range(-1, 2) if (x,y) != (0,0)]
+legal_moves = [[x, y] for x in range(-1, 2) for y in range(-1, 2) if (x,y) != (0,0) and x!=y and x!=-y]
 	
 #Test if a move is legal, based on the board limits
-def check_legal(board, new_move):
+def check_legal(new_move):
 	#check if the move is within the limits of the board
-	return new_move[0] >= 0 and new_move[1] >= 0 and \
-	new_move[0] < len(board) and new_move[1] < len(board)
+	if new_move[0] < 0 or new_move[1] < 0 or new_move[0] > 3 or new_move[1] > 3:
+		return False
+	return True
 
 #Rate a possible move based on the state of the board
 #number of moves for player - number of moves for opponent
@@ -28,36 +29,60 @@ def evaluation(board, player_pos, opp_pos):
 	for x, y in player_pos:
 		for move in legal_moves:
 			new_move = (x + move[0], y + move[1])
-			if check_legal(board, new_move) and new_move not in player_pos:
+			if check_legal(new_move) and new_move not in opp_pos:
 				total += 2 #adjust this parameter? but this is good outcome for player
 	for x, y in opp_pos:
 		for move in legal_moves:
 			new_move = (x + move[0], y + move[1])
-			if check_legal(board, new_move) and new_move not in opp_pos:
+			if check_legal(new_move) and new_move not in player_pos:
 				total -= -1 #good for opponent
 				
 	return total
 	
-def move(board, pos_before, pos_after, stones, player, count):
-	count_pos_before = board[pos_before[0]][pos_before[1]]
-	if count > 0:
-		if count_pos_before < count:
-			count = count_pos_before
+def change_value(board, move, player_pos, player, value):
+	if board[move[0]][move[1]][0] == player:
+		board[move[0]][move[1]][1] += value
+	#if it is unoccupied
+	else:
+		board[move[0]][move[1]][0] = player
+		board[move[0]][move[1]][1] = value
+		player_pos.add(move) #add to the player's list
+	
+def perform_move(board, move_list, player_pos, player):
+	count_before = board[move_list[0][0]][move_list[0][1]][1]
+	if count_before:
+		#figure out how many stones to move
+		print move_list
+		if len(move_list) == 2:
+			change_value(board, move_list[1], player_pos, player, count_before)
+			count_before = 0
+		elif len(move_list) == 3:
+			change_value(board, move_list[1], player_pos, player, 1)
+			count_before -= 1
+			if count_before > 0:
+				change_value(board, move_list[2], player_pos, player, count_before)
+				count_before = 0
+		elif len(move_list) == 4: 
+			change_value(board, move_list[1], player_pos, player,1)
+			count_before -= 1
+			if count_before > 0:
+				change_value(board, move_list[2], player_pos, player, min(count_before, 2))
+				count_before -= min(count_before, 2)
+				if count_before > 0: 
+					change_value(board, move_list[3], player_pos, player, count_before)
+					count_before = 0
 		
-		if board[pos_after[0]][pos_after[1]][0] == player:
-			board[pos_after[0]][pos_after[1]][1] += count
-		else:
-			board[pos_after[0]][pos_after[1]][0] = color
-			board[pos_after[0]][pos_after[1]][1] = count
-		stones.add(pos_after)
+		#take away stones from initial spot		
+		board[move_list[0][0]][move_list[0][1]][1] = count_before
 		
-		if board[pos_before[0]][pos_before[1]][1] <= 0:
-			board[pos_before[0]][pos_before[1]][0] = None
-			board[pos_before[0]][pos_before[1]][1] = 0
-			if pos_before in stones:
-				stones.remove(pos_before)
+		#remove the original spot if there aren't any stones left
+		if board[move_list[0][0]][move_list[0][1]][1] <= 0:
+			board[move_list[0][0]][move_list[0][1]][0] = None
+			board[move_list[0][0]][move_list[0][1]][1] = 0
+			if move_list[0] in player_pos:
+				player_pos.remove(move_list[0])
 			
-		return count > 0
+		return True
 	return False
 	
 def random_move(board, player, player_pos, opp_pos):
@@ -66,92 +91,90 @@ def random_move(board, player, player_pos, opp_pos):
 		random.shuffle(legal_moves)
 		
 		for move in legal_moves:
-			initial_move = (x + move[0], y + move[1])
-			count = board[x][y][1]
-			if check_legal(board, initial_move) and initial_move not in opp_pos:
-				new_move = (initial_move[0] + move[0], initial_move[1] + move[1])
-				if new_move in opp_pos or not(check_legal(board, new_move)):
-					return move(board, (x,y), initial_move, count, player_pos, player)
+			move_list = [(x,y),(x + move[0], y + move[1])]
+			value = board[x][y][1]
+			print move_list
+			if check_legal(move_list[1]) and move_list[1] not in opp_pos:
+				temp_move = (move_list[1][0] + move[0], move_list[1][1] + move[1])
+				if temp_move in opp_pos or not(check_legal(temp_move)) or value < 2:
+					print("Found a random move: " + str(move_list))
+					return perform_move(board, move_list, player_pos, player)
 				else:
-					final_move = (new_move[0] + move[0], new_move[1] + move[1])
-					if final_move in opp_pos or not(check_legal(board, final_move)):
-						return move(board, (x,y), initial_move, 1, player_pos, player) or \
-							move(board, (x,y), new_move, num - 1, player_pos, player)
+					move_list.append(temp_move)
+					temp_move = (move_list[2][0] + move[0], move_list[2][1] + move[1])
+					if temp_move in opp_pos or not(check_legal(temp_move)) or value < 3:
+						print("Found a random move: " + str(move_list))
+						return perform_move(board, move_list, player_pos, player)
 					else:
-						return move(board, (x,y), initial_move, 1, player_pos, player) or \
-							move(board, (x,y), new_move, 2, player_pos, player) or \
-							move(board, (x,y), final_move, num - 3, player_pos, player)
+						move_list.append(temp_move)
+						print("Found a random move: " + str(move_list))
+						return perform_move(board, move_list, player_pos, player)
+	print "Stuck! Random(" + player + ") loses"
 	return False
 	
 def find_best_value(board, player_pos, opp_pos, max):
-	new_max = float("inf")
+	new_min = float("inf")
 	
 	for x, y in opp_pos:
 		for move in legal_moves:
-			initial_move = (x + move[0], y + move[1])
+			move_list = [(x,y),(x + move[0], y + move[1])]
 			
-			if check_legal(board, initial_move) and initial_move not in player_pos:
+			if check_legal(move_list[1]) and move_list[1] not in player_pos:
 				possible_moves = set(opp_pos)
-				possible_moves.add(initial_move)
+				possible_moves.add(move_list[0])
 				
-				next_move = (initial_move[0] + move[0], initial_move[1] + move[1])
-				if next_move not in player_pos and check_legal(board, next_move):
-					possible_moves.add(next_move)
-					final_move = (next_move[0] + move[0], next_move[1] + move[1])
-					if final_move not in player_pos and check_legal(board, final_move):
-						possible_moves.add(final_move)
-				value = evaluation(board, player_pos, opp_pos)
+				move_list.append((move_list[1][0] + move[0], move_list[1][1] + move[1]))
+				if move_list[2] not in player_pos and check_legal(move_list[2]):
+					possible_moves.add(move_list[2])
+					move_list.append((move_list[2][0] + move[0], move_list[2][1] + move[1]))
+					if move_list[3] not in player_pos and check_legal(move_list[3]):
+						possible_moves.add(move_list[3])
+				value = evaluation(board, player_pos, possible_moves)
 				if value < max: 
 					return value
-				if value < new_max:
-					new_max = value
+				if value < new_min:
+					new_min = value
 		
-	return new_max
+	return new_min
 	
-def find_best_move(board, player, opponent, player_pos, opp_pos):
+def minmax_find_move(board, player, player_pos, opp_pos):
 	current_best = []
-	value = -1*float("inf")
+	max_value = 0
 	for x,y in player_pos:
 		for move in legal_moves:
-			initial_move = (x + move[0], y + move[1])
-			total_move = []
+			move_list = [(x,y),(x + move[0], y + move[1])]
 			
-			if check_legal(board, initial_move) and initial_move not in player_pos:
-				total_move.append(initial_move)
-				total_move.append((x,y))
-				possible_moves = set(opp_pos)
-				possible_moves.add(initial_move)
+			if check_legal(move_list[1]) and move_list[1] not in opp_pos:
+				possible_moves = set(player_pos)
+				possible_moves.add(move_list[1])
 				
-				next_move = (initial_move[0] + move[0], initial_move[1] + move[1])
+				move_list.append((move_list[1][0] + move[0], move_list[1][1] + move[1]))
 				
-				if next_move not in player_pos and check_legal(board, next_move):
-					total_move.append(next_move)
-					possible_moves.add(next_move)
+				if move_list[2] not in player_pos and check_legal(move_list[2]):
+					possible_moves.add(move_list[2])
 					
-					final_move = (next_move[0] + move[0], next_move[1] + move[1])
+					move_list.append((move_list[2][0] + move[0], move_list[2][1] + move[1]))
 					
-					if final_move not in player_pos and check_legal(board, final_move):
-						total_move.append(final_move)
-						possible_moves.add(final_move)
-				new_value = find_best_value(board, possible_moves, opp_pos, value)
-				if new_value >= value:
-					current_best = total_move
-					value =  new_value
-	if not current_best:
-		return False
-	else:
+					if move_list[3] not in player_pos and check_legal(move_list[3]):
+						possible_moves.add(move_list[3])
+				new_value = find_best_value(board, possible_moves, opp_pos, max_value)
+				if new_value >= max_value:
+					current_best = move_list
+					max_value =  new_value
+	if current_best:
+		print("Found a best move: " + str(current_best) + ", value of " + str(max_value))
 		move_length = len(current_best)
-		count = board[current_best[0][0]][current_best[0][1]][1]
-		if move_length == 2:
-			return move(board, current_best[0], current_best[1], count, player_pos, color)
-		elif move_length == 3:
-			return move(board, current_best[0], current_best[1], 1, player_pos, color) or \
-				   move(board, current_best[0], current_best[2], count - 1, player_pos, color)
-		elif move_length == 4:
-			return move(board, current_best[0], current_best[1], 1, player_pos, color) or \
-				   move(board, current_best[0], current_best[2], 2, player_pos, color) or \
-				   move(board, current_best[0], current_best[3], count - 3, player_pos, color)
+		if perform_move(board, current_best, player_pos, player):
+			print("Performed move " + str(current_best))
+			return True
+				   
+	print("Stuck! MinMax(" + player + ") loses")
 	return False
+	
+def print_board(board):
+	for x in range(4):
+		for y in range(4):
+			print("pos: " + str(x) + ", " + str(y) + " val: " + str(board[x][y]))
 	
 player_1_pos = set()
 player_2_pos = set()
@@ -162,13 +185,15 @@ player_1_pos.add((0,3))
 player_2_pos.add((3,0))
 turn = 0
 while(random_move(board, "Black", player_1_pos, player_2_pos)):
-	if(find_best_move(board, "White", "Black", player_2_pos, player_1_pos)):
+	if(minmax_find_move(board, "White", player_2_pos, player_1_pos)):
 		print "Making a move"
+		print_board(board)
 	else:
 		break
 	turn+=1
-print(player_1_pos)
-print(player_2_pos)	
-print("Turns it took: " + turn)
+print("Random player: " + str(player_1_pos))
+print("Minmax player: " + str(player_2_pos))	
+print_board(board)
+print("Turns it took: " + str(turn))
 	
 	
