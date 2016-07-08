@@ -5,76 +5,101 @@
 #create tree with empty connections where there is a 0
 
 
-from heapq import heappop, heappop
+from heapq import heappop, heappush
 from collections import deque
 			
 	
 #root node is start point, end points are leaves	
 
-maze = [[1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1],
-		[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[0,0,0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
-		[1,1,3,0,0,0,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
-		[1,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
-		[1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
-		[0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-		[1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,0,1,1,1,1,1,0,0,0],
-		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0],
-		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,1,0,1,1,0,1,1,0],
-		[1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,0,1,0,1,1,0,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,1,1,0,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1],
-		[1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1],
-		[1,1,0,0,0,1,0,0,1,1,0,0,0,1,1,1,1,1,0,1,1,1,1,1,1],
-		[1,1,0,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,0,0,0,0,1],
-		[0,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1],
-		[0,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1],
-		[1,1,1,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1],
-		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
-		
+# maze = [[1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1],
+# 		[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+# 		[0,0,0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
+# 		[1,1,3,0,0,0,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
+# 		[1,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
+# 		[1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+# 		[1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
+# 		[0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+# 		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
+# 		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
+# 		[1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,0,1,1,1,1,1,0,0,0],
+# 		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0],
+# 		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,1,0,1,1,0,1,1,0],
+# 		[1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,0,1,0,1,1,0,1,1,1],
+# 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,1,1,0,1,1,1],
+# 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1],
+# 		[1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1],
+# 		[1,1,0,0,0,1,0,0,1,1,0,0,0,1,1,1,1,1,0,1,1,1,1,1,1],
+# 		[1,1,0,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,0,0,0,0,1],
+# 		[0,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1],
+# 		[0,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1],
+# 		[1,1,1,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1],
+# 		[1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1],
+# 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1],
+# 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
+
+
+
+maze = [[0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0], 
+        [1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        [1,1,1,1,1,0,0,0,1,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0], 
+        [0,0,0,1,1,1,0,0,1,0,0,0,0,0,1,1,1,1,1,1,1,0,0,0,0], 
+        [0,0,0,1,1,1,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,0,0], 
+        [0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        [0,0,0,0,0,0,0,0,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,0,0], 
+        [1,1,1,1,1,1,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+        [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+        [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,1,1],
+        [0,0,0,0,0,0,0,0,1,1,1,1,1,0,0,1,1,0,0,0,0,0,1,1,1],
+        [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,0,0,0,1,1,1,1],
+        [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,1,0,1,0,0,1,0,0,1],
+        [0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,1,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0],
+        [0,0,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,1,0,0,0],
+        [0,0,1,1,1,0,1,1,0,0,1,1,1,0,0,0,0,0,1,0,0,0,0,0,0],
+        [0,0,1,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,1,1,1,1,1,1,0],
+        [1,1,1,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,1,1,1,1,0,0,0],
+        [1,1,1,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,1,1,0,0,0,0,0],
+        [0,0,0,0,0,0,1,1,0,0,1,1,1,0,0,0,0,0,1,1,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,1,1,1,0,0,0,0,0,1,1,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0],
+        [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]]
+
+
 # Main 
 def solve():
-	for i in range(3):
-		#start to E1
-		start = (2, 11)
-		e1 = (22, 19)
-		breadthFirst(start, e1, maze)
-		depthFirst(start, e1, maze)
-		aStar(start, e1, maze)
-		#start to E2
-		e2 = (2, 21)
-		breadthFirst(start, e2, maze)
-		depthFirst(start, e2, maze)
-		aStar(start, e2, maze)
-		#start from 0,0 to 24,24
-		start = (0,0)
-		end = (24,24)
-		breadthFirst(start, end, maze)
-		depthFirst(start, end, maze)
-		aStar(start, end, maze)
+
+	#start to E1
+	start = (13, 2)
+	e1 = (5, 23)
+	breadthFirst(start, e1, maze)
+	depthFirst(start, e1, maze)
+	aStar(start, e1, maze)
+	#start to E2
+	# e2 = (2, 21)
+	# breadthFirst(start, e2, maze)
+	# depthFirst(start, e2, maze)
+	# aStar(start, e2, maze)
+	# #start from 0,0 to 24,24
+	# start = (0,0)
+	# end = (24,24)
+	# breadthFirst(start, end, maze)
+	# depthFirst(start, end, maze)
+	# aStar(start, end, maze)
 
 		
 def createTree(maze):
-	height = len(maze)
-	if height:
-		width = len(maze[0])
-	else:
-		width = 0
-	width = len(maze[0]) if height else 0
-	tree = {(x, y): [] for y in range(width) for x in range(height) if not maze[x][y]}
-	for x, y in tree.keys():
-		if not maze[x + 1][y] and x < height - 1:
-			tree[(x + 1, y)].append(("U", (x, y)))
-			tree[(x, y)].append(("D", (x + 1, y)))
-		if y < width - 1 and not maze[x][y + 1]:
-			tree[(x, y + 1)].append(("L", (x,y)))
-			tree[(x,y)].append(("R", (x, y + 1)))
-	return tree
+    height = len(maze)
+    width = len(maze[0]) if height else 0
+    graph = {(i, j): [] for j in range(width) for i in range(height) if not maze[i][j]}
+    for row, col in graph.keys():
+        if row < height - 1 and not maze[row + 1][col]:
+            graph[(row, col)].append(("S", (row + 1, col)))
+            graph[(row + 1, col)].append(("N", (row, col)))
+        if col < width - 1 and not maze[row][col + 1]:
+            graph[(row, col)].append(("E", (row, col + 1)))
+            graph[(row, col + 1)].append(("W", (row, col)))
+    return graph
 
 #BFS
 def breadthFirst(start, end, tree):
@@ -88,13 +113,11 @@ def breadthFirst(start, end, tree):
 		if current in visited:
 			continue
 		visited.add(current)
-		import pdb
-		pdb.set_trace()
 		for direct, relative in tree[current]:
-			queue.append((neighbour, path + direct))
+			queue.append((relative, path + direct))
 	print("Breadth First Traversal")
-	print("Visited: " + visited)
-	print("Path: " + path)
+	print("Visited: ", visited)
+	print("Path: ", path)
 	
 #DFS
 def depthFirst(start, goal, maze):
@@ -102,22 +125,22 @@ def depthFirst(start, goal, maze):
 	visited = set()
 	tree = createTree(maze)
 	while stack:
-		(current, path) = stack.pop()
+		(path, current) = stack.pop()
 		if current == goal:
 			break
 		if current in visited:
 			continue
 		visited.add(current)
 		for direct, neighbor in tree[current]:
-			stack.append((neighbor, path + dir))
+			stack.append((path + direct, neighbor))
 	print("Depth First Traversal")
-	print("Visited: " + visited)
-	print("Path: " + path)
+	print("Visited: ", visited)
+	print("Path: ", path)
 
 #A*
 def aStar(start, goal, maze):
 	queue = []
-	heappush(queue, (0 + heuristic(start, goal), 0, "", start))
+	heappush(queue, (heuristic(start, goal), 1, "", start))
 	visited = set()
 	tree = createTree(maze)
 	while queue:
@@ -130,9 +153,9 @@ def aStar(start, goal, maze):
 		for direct, neighbor in tree[current]:
 			heappush(queue, (cost+ heuristic(neighbor, goal), cost + 1, path + direct, neighbor))
 	print("A* Algorithm")
-	print("Cost: " + cost)
-	print("Path: " + path)
-	print("Visited: " + visited)
+	print("Cost: " + str(cost))
+	print("Path: " + str(path))
+	print("Visited: " , visited)
 
 
 def heuristic(cell, goal):
