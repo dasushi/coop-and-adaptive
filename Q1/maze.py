@@ -7,37 +7,6 @@
 
 from heapq import heappop, heappush
 from collections import deque
-			
-	
-#root node is start point, end points are leaves	
-
-# maze = [[1,1,1,1,0,0,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1],
-# 		[0,0,0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-# 		[0,0,0,0,0,1,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
-# 		[1,1,3,0,0,0,1,1,0,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
-# 		[1,1,1,0,0,0,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
-# 		[1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-# 		[1,1,1,1,1,1,1,1,0,0,0,1,1,1,0,0,0,0,0,0,0,1,1,1,1],
-# 		[0,0,0,0,0,0,0,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-# 		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-# 		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-# 		[1,1,1,1,1,1,1,1,0,0,0,0,0,1,1,0,0,1,1,1,1,1,0,0,0],
-# 		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,1,1,1,1,0,0,0,0],
-# 		[1,1,1,1,1,1,1,1,1,1,0,1,1,1,1,0,0,1,0,1,1,0,1,1,0],
-# 		[1,1,1,1,0,1,1,1,1,1,1,1,1,1,1,0,0,1,0,1,1,0,1,1,1],
-# 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,0,1,1,0,1,1,1],
-# 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1],
-# 		[1,1,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,0,1,1,0,1,1,1],
-# 		[1,1,0,0,0,1,0,0,1,1,0,0,0,1,1,1,1,1,0,1,1,1,1,1,1],
-# 		[1,1,0,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,0,0,0,0,1],
-# 		[0,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1],
-# 		[0,0,0,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1],
-# 		[1,1,1,1,1,1,0,0,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1],
-# 		[1,1,1,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,0,0,1,1,1,1,1],
-# 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0,0,1,1,1,1,1],
-# 		[1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]]
-
-
 
 maze = [[0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0], 
         [1,1,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
@@ -69,23 +38,24 @@ maze = [[0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0],
 # Main 
 def solve():
 
+	tree = createTree(maze)
 	#start to E1
 	start = (13, 2)
 	e1 = (5, 23)
-	breadthFirst(start, e1, maze)
-	depthFirst(start, e1, maze)
-	aStar(start, e1, maze)
+	breadthFirst(start, e1, tree)
+	depthFirst(start, e1, tree)
+	aStar(start, e1, tree)
 	#start to E2
-	# e2 = (2, 21)
-	# breadthFirst(start, e2, maze)
-	# depthFirst(start, e2, maze)
-	# aStar(start, e2, maze)
+	e2 = (13, 3)
+	breadthFirst(start, e2, tree)
+	depthFirst(start, e2, tree)
+	aStar(start, e2, tree)
 	# #start from 0,0 to 24,24
-	# start = (0,0)
-	# end = (24,24)
-	# breadthFirst(start, end, maze)
-	# depthFirst(start, end, maze)
-	# aStar(start, end, maze)
+	start = (24,0)
+	end = (0,24)
+	breadthFirst(start, end, tree)
+	depthFirst(start, end, tree)
+	aStar(start, end, tree)
 
 		
 def createTree(maze):
@@ -104,15 +74,14 @@ def createTree(maze):
 #BFS
 def breadthFirst(start, end, tree):
 	queue = deque([(start, "")]) #(current node, [array for path])
-	visited = set()
-	tree = createTree(maze)
+	visited = []
 	while queue:
 		(current, path) = queue.popleft()
 		if current == end:
 			break
 		if current in visited:
 			continue
-		visited.add(current)
+		visited.append(current)
 		for direct, relative in tree[current]:
 			queue.append((relative, path + direct))
 	print("Breadth First Traversal")
@@ -120,17 +89,16 @@ def breadthFirst(start, end, tree):
 	print("Path: ", path)
 	
 #DFS
-def depthFirst(start, goal, maze):
+def depthFirst(start, goal, tree):
 	stack = deque([("", start)]) #(current node, [array for path])
-	visited = set()
-	tree = createTree(maze)
+	visited = []
 	while stack:
 		(path, current) = stack.pop()
 		if current == goal:
 			break
 		if current in visited:
 			continue
-		visited.add(current)
+		visited.append(current)
 		for direct, neighbor in tree[current]:
 			stack.append((path + direct, neighbor))
 	print("Depth First Traversal")
@@ -138,18 +106,17 @@ def depthFirst(start, goal, maze):
 	print("Path: ", path)
 
 #A*
-def aStar(start, goal, maze):
+def aStar(start, goal, tree):
 	queue = []
 	heappush(queue, (heuristic(start, goal), 1, "", start))
-	visited = set()
-	tree = createTree(maze)
+	visited = []
 	while queue:
 		_, cost, path, current = heappop(queue)
 		if current == goal:
 			break
 		if current in visited:
 			continue
-		visited.add(current)
+		visited.append(current)
 		for direct, neighbor in tree[current]:
 			heappush(queue, (cost+ heuristic(neighbor, goal), cost + 1, path + direct, neighbor))
 	print("A* Algorithm")
