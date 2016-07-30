@@ -4,9 +4,9 @@ import random
 total_cities = 29
 alpha = 1
 beta = 5
-num_of_ants = 20
-evap_rate = 0.6
-Q = 1000
+num_of_ants = 15
+evap_rate = 0.1
+Q = 2000
 iteration_times = 3000
 
 # Fill with 
@@ -42,11 +42,8 @@ cities = [
 	[ 360.0, 1980.0 ]]
 
 
-pheromone = [[1.0]*total_cities]*total_cities
+pheromone = [[1000.0]*total_cities]*total_cities
 distance = [[hypot(cities[i][0] - cities[j][0], cities[i][1]-cities[j][1]) for j in range(total_cities)] for i in range(total_cities)]
-
-
-
 
 class ant:
 	def __init__(self, initial):
@@ -56,14 +53,6 @@ class ant:
 		self.visited.append(initial)
 		self.unvisited = [x for x in range(29)]
 		self.unvisited.remove(initial)
-
-
-
-	def construct_solution(self):
-		while len(self.unvisited) > 0:
-			self.current_city = next_city = self.calc_next_city()
-			self.visited.append(next_city)
-			self.unvisited.remove(next_city)
 
 
 	# Return next city using array of unvisited cities' probabilities
@@ -93,6 +82,12 @@ class ant:
 			else:
 				possible_city += 1
 
+	def construct_solution(self):
+		while len(self.unvisited) > 0:
+			self.current_city = next_city = self.calc_next_city()
+			self.visited.append(next_city)
+			self.unvisited.remove(next_city)
+
 	def get_cost(self):
 		cost = 0
 		for city in range(len(self.visited)-1):
@@ -117,7 +112,6 @@ class ant:
 initial_cities = random.sample(range(29), num_of_ants)
 ants = [ant(x) for x in initial_cities]
 
-
 for i in range(iteration_times):
 	
 	if i != 0:
@@ -129,11 +123,13 @@ for i in range(iteration_times):
 	
 	for ant in ants:
 		ant.construct_solution()
-
+	
 	#evaporate
 	pheromone[:] = [[(1- evap_rate)*pheromone[i][j] for j in range(total_cities)] for i in range(total_cities)]
+	
 	for ant in ants:
 		ant.add_pheromone()
+	
 
 best_ant = ants[0]
 best_cost = ants[0].get_cost()
@@ -142,6 +138,6 @@ for ant in ants:
 		best_ant = ant
 		best_cost = ant.get_cost()
 
-print best_ant.initial
-print best_ant.visited
-print best_ant.get_cost()
+print "Initial: ", best_ant.initial
+print "Visited: ", best_ant.visited
+print "Cost: " + str(best_ant.get_cost())
