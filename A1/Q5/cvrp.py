@@ -153,16 +153,16 @@ for raw in inputfile:
 		dimension = int(value[2])
 	elif header == "DEPOT_SECTION":
 		read_flag = 6
-		print "In DEPOT_SECTION"
+		#print "In DEPOT_SECTION"
 	elif header == "DEMAND_SECTION":
 		read_flag = 4
-		print "In DEMAND_SECTION"
+		#print "In DEMAND_SECTION"
 	elif header == "NODE_COORD_SECTION":
 		read_flag = 2
-		print "In NODE_COORD_SECTION"
+		#print "In NODE_COORD_SECTION"
 	elif header == "EOF":
 		read_flag = 0
-		print "EOF"
+		#print "EOF"
 		
 	if read_flag == 1:
 		positions.append((int(value[1]), int(value[2])))
