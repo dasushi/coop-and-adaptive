@@ -1,0 +1,335 @@
+Observations:
+Conditions 1:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.7
+attraction-to-global-best = 1.7
+Trials (number of ticks to complete)
+1: Fail
+2: Fail
+3: 15
+4: Fail
+5: Fail
+6: 328
+7: Fail
+8: 30
+9: Fail
+10: Fail
+3/10, with average of 124.333 when passing
+
+Conditions 2:
+landscape-smoothness=20
+population-size = 80
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.7
+attraction-to-global-best = 1.7
+Trials (number of ticks to complete)
+1: 15
+2: Fail
+3: 20
+4: 9
+5: Fail
+6: Fail
+7: Fail
+8: 10
+9: 19
+10: 40
+6/10, with average of 18.83333 when passing - better performance due to spawning closer, still bad convergence
+
+Conditions 3:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 6
+attraction-to-personal-best = 1.7
+attraction-to-global-best = 1.7
+Trials (number of ticks to complete)
+1: Fail
+2: Fail
+3: Fail
+4: Fail
+5: 14
+6: 15
+7: 22
+8: 29
+9: Fail
+10: Fail
+4/10, with average of 20 when passing - quick solves, but only when spawned close
+
+Conditions 4:
+20, 30, 0.60, 3, 6, 1.7
+landscape-smoothness=20
+population-size = 80
+particle-inertia = 0.60
+particle-speed-limit = 6
+attraction-to-personal-best = 1.7
+attraction-to-global-best = 1.7
+Trials (number of ticks to complete)
+1: Fail
+2: 10
+3: 12
+4: Fail
+5: Fail
+6: Fail
+7: 7
+8: Fail
+9: 11
+10: Fail
+4/10, with average of 10 when passing - quick solves, but only when spawned VERY close
+
+Conditions 5:
+20, 30, 0.73, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.73
+particle-speed-limit = 2
+attraction-to-personal-best = 1.7
+attraction-to-global-best = 1.7
+Trials (number of ticks to complete)
+1: Fail
+2: Fail
+3: Fail
+4: 23
+5: Fail
+6: Fail
+7: Fail
+8: Fail
+9: 113
+10: Fail
+2/10, with average of 79.5 when passing - Slightly more able to overcome local minima
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1: Fail (very close too)
+2: 13
+3: 51
+4: 70
+5: Fail
+6: 46
+7: Fail
+8: Fail
+9: Fail
+10: 77
+5/10, with average of 51.4 when passing - still liable to local minima 
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1:
+2:
+3:
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+/10, with average of . when passing -
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1:
+2:
+3:
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+/10, with average of . when passing -
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1:
+2:
+3:
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+/10, with average of . when passing -
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1:
+2:
+3:
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+/10, with average of . when passing -
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1:
+2:
+3:
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+/10, with average of . when passing -
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1:
+2:
+3:
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+/10, with average of . when passing -
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1:
+2:
+3:
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+/10, with average of . when passing -
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1:
+2:
+3:
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+/10, with average of . when passing -
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1:
+2:
+3:
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+/10, with average of . when passing -
+
+Conditions 6:
+20, 30, 0.60, 3, 2, 1.7
+landscape-smoothness=20
+population-size = 30
+particle-inertia = 0.60
+particle-speed-limit = 2
+attraction-to-personal-best = 1.5
+attraction-to-global-best = 1.5
+Trials (number of ticks to complete)
+1:
+2:
+3:
+4:
+5:
+6:
+7:
+8:
+9:
+10:
+/10, with average of . when passing -
