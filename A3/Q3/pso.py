@@ -18,6 +18,9 @@ inertia = 0.7
 successes = 0
 failures = 0
 convergenceFactor = 1
+successFactor = 20
+failureFactor = 10
+bestParticle = None
 #CONSTRICTION FACTOR
 phi = globalFactor + localFactor
 constrictionFactor = 2 / abs(2 - phi - (phi**2 - 4*phi)**(0.5))
@@ -96,7 +99,17 @@ class swarmParticle:
         self.position = tuple((max(min(self.position[0] + self.velocity[0], xmax),-1*xmax),\
          max(min(self.position[1] + self.velocity[1], ymax),-1*ymax)))
 
-    def updateConvergence(self, globalBestPos):
+    def updateBest(self, globalBestPos, newConvergenceFactor):
+        randomX = random.uniform(-1,1)
+        randomY = random.uniform(-1,1)
+        if successes > successFactor:
+            newConvergenceFactor *= 2
+        elif failures > failureFactor:
+            newConvergenceFactor /= 2
+
+        self.velocity = tuple((inertia*self.velocity[0] - self.position[0] + self.personalBestPos[0] + newConvergenceFactor*randomX,
+         inertia*self.velocity[1] - self.position[1] + self.personalBestPos[1] + newConvergenceFactor*randomY))
+        return newConvergenceFactor
 
 iterations = 0
 particle_list = []
@@ -116,12 +129,22 @@ while iterations < 10000:
             particle.personalBest = fitness
             particle.personalBestPos = particle.position
         if fitness < globalBest:
+            #GUARANTEED CONVERGENCE
+            """if particle != bestParticle:
+                failures = 0
+                successes = 0
+                bestParticle = particle
+            else:
+                if fitness < bestParticle.personalBest:
+                    successes += 1
+                else:
+                    failures += 1"""
             globalBest = fitness
             globalBestPos = particle.position
             #print(particle.velocity)
     #UPDATE
     #NEIGHBOURHOOD BEST, EDGE VALUES
-    lastIndex = len(particle_list) - 1
+    """lastIndex = len(particle_list) - 1
     if particle_list[lastIndex].personalBest < particle_list[1].personalBest:
         particle_list[0].update(particle_list[lastIndex].personalBestPos)
     else:
@@ -135,10 +158,16 @@ while iterations < 10000:
             neighbourhoodBestPos = particle_list[index-1].personalBestPos
         else:
             neighbourhoodBestPos = particle_list[index+1].personalBestPos
-        particle_list[index].update(neighbourhoodBestPos)
-    #GLOBAL BEST
+        particle_list[index].update(neighbourhoodBestPos)"""
+    #GUARANTEED CONVERGENCE
+    for particle in particle_list:
+        if particle==bestParticle:
+            convergenceFactor = particle.updateBest(globalBestPos, convergenceFactor)
+        else:
+            particle.update(globalBestPos)
+    #REGULAR
     #for particle in particle_list:
-    #    particle.updateConstriction(globalBestPos)
+    #    particle.update(globalBestPos)
     iterations+=1
     if iterations%1000==0:
         print("iteration: " + str(iterations) + " globalBest: " + str(globalBestPos) + ", val: " + str(globalBest))
