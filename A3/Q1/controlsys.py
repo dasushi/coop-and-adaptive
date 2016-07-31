@@ -75,16 +75,16 @@ def crossover(lst):
         #only crossover randomly, with arithmetic crossover
         if random.random() < crossoverRate:
             #child 1
-            K1 = alpha*mom[0][0] + (1-alpha)*dad[0][0]
-            Ti1 = alpha*mom[0][1] + (1-alpha)*dad[0][1]
-            Td1 = alpha*mom[0][2] + (1-alpha)*dad[0][2]
-            final.append({check_limits(K1, Ti1, Td1), round(fitnessFunction(K1, Ti1, Td1), 3)})
+            K1 = alpha*mom['params'][0] + (1-alpha)*dad['params'][0]
+            Ti1 = alpha*mom['params'][1] + (1-alpha)*dad['params'][1]
+            Td1 = alpha*mom['params'][2] + (1-alpha)*dad['params'][2]
+            final.append({'params': check_limits(K1, Ti1, Td1), 'fit': round(fitness(K1, Ti1, Td1), 3)})
 
             #child 2
-            K2 = alpha*dad[0][0] + (1-alpha)*mom[0][0]
-            Ti2 = alpha*dad[0][1] + (1-alpha)*mom[0][1]
-            Td2 = alpha*dad[0][2] + (1-alpha)*mom[0][2]
-            final.append({check_limits(K2, Ti2, Td2), round(fitnessFunction(K2, Ti2, Td2), 3)})
+            K2 = alpha*dad['params'][0] + (1-alpha)*mom['params'][0]
+            Ti2 = alpha*dad['params'][1] + (1-alpha)*mom['params'][1]
+            Td2 = alpha*dad['params'][2] + (1-alpha)*mom['params'][2]
+            final.append({'params': check_limits(K2, Ti2, Td2), 'fit': round(fitness(K2, Ti2, Td2), 3)})
         else:
             final.append(mom)
             final.append(dad)
@@ -94,15 +94,15 @@ def crossover(lst):
 def mutateValues(lst):
     results = []
 
-    for item in lst:
+    for index, item in enumerate(lst):
         if random.random() < mutateRate:
             mutVal = random.random()
             k = kMin + mutVal*(kMax - kMin)
             ti = tiMin + mutVal*(tiMin - tiMin)
             td = tdMin + mutVal*(tdMax - tdMin)
-            results.append({[k, ti, td], round(fitnessFunction(k, ti, td), 3)})
+            results.append({'params': [k, ti, td], 'fit': round(fitness(k, ti, td), 3)})
         else:
-            results.append(lst[i])
+            results.append(lst[index])
 
     return results
 
@@ -110,19 +110,17 @@ def mutateValues(lst):
 def genetic_algorithm(initialPop, finalGeneration):
     fits = []
     generation = 0
-    import pdb
-    pdb.set_trace()
     currentPop = sorted(initialPop, key= lambda x: x['fit'])
     while generation < finalGeneration:
         sumArray = []
         for current in currentPop:
-            sumArray.append(current[1])
+            sumArray.append(current['fit'])
         fitSum = sum(sumArray)
         averageProb = (sum([x['fit']/fitSum for x in currentPop]))/len(currentPop)
         parentPop = []
 
         for sol in currentPop:
-            prob = sol[1]/fitSum
+            prob = sol['fit']/fitSum
             expectedCount = prob/averageProb
             actualCount = int(round(expectedCount))
 
@@ -133,15 +131,15 @@ def genetic_algorithm(initialPop, finalGeneration):
         crossPop = crossover(parentPop)
 
         random.shuffle(crossPop)
-        mutatePop = sorted(mutateValues(crossPop), key= lambda x: x[1])
+        mutatePop = sorted(mutateValues(crossPop), key= lambda x: x['fit'])
 
         currentPop[0] = mutatePop[-1]
         currentPop[1] = mutatePop[-2]
 
-        currentPop = sorted(currentPop, key= lambda x: x[1])
+        currentPop = sorted(currentPop, key= lambda x: x['fit'])
         generation += 1
 
-        fits.append(currentPop[-1][1])
+        fits.append(currentPop[-1]['fit'])
 
 
     plt.plot(fits)
