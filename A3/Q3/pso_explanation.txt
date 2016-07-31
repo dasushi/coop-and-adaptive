@@ -1,0 +1,99 @@
+###Particle Search Optimization###
+ECE458 Assignment 3, Question 3
+Stephen Arsenault and Youssef Medhat
+
+Particle Search Optimization was implemented with basic velocity updating,
+inertia factor updating, velocity-max bounded updating, and constriction factor
+updating. This was possible with both global-based maximums as well as 
+neighborhood-based optimization using ring topology.
+
+Basic algorithm framework:
+#INITIALIZE
+for particle in range(population)
+   create_new_particle()
+#MAIN LOOP
+while stoppingCriteria==false:
+   #DETERMINE FITNESS
+   for particle in particle_list:
+      calculate_fitness()
+      if fitness < personalBest:
+        updatePersonalBest()
+      if fitness < globalBest:
+        updateGlobalBest()
+  #UPDATE PARTICLES
+  for particle in particle_list:
+    particle.updateVelocityAndPosition()
+
+The main difference between each type of PSO was the velocity updating. We used
+a "swarmParticle" class which represented a particle, containing a position,
+velocity, and record of personal best value/position. The position updating was
+the same for all. This was represented by the equation:
+pos_new = pos_old + velocity
+and was bounded between the minimum and maximum values (-5,5).
+
+The basic velocity updating was:
+velocity_new = velocity_old + personalFactor*rand(0,1)*(personalBest - position) +
+                globalFactor*rand(0,1)*(globalBest - position)
+which represents the old velocity, with adjustment towards the global and
+personal best based on scaling factors and a uniform random scaling value.
+
+For inertia based upating:
+velocity_new = velocity_old*inertiaWeight +
+                personalFactor*rand(0,1)*(personalBest - position) +
+                globalFactor*rand(0,1)*(globalBest - position)
+
+The new "inertiaWeight" parameter, between (0,1) to avoid divergent solutions,
+allows for particles to avoid local minima/maxima and move towards more
+distant solutions.
+
+For velocityMax based updating:
+velocity_new = max(vmin,min(vmax, velocity_old +
+                personalFactor*rand(0,1)*(personalBest - position) +
+                globalFactor*rand(0,1)*(globalBest - position)))
+This limits the velocity to a minimum and maximum value.
+
+For constriction based updating:
+velocity_new = constrictionFactor*(velocity_old +
+                personalFactor*rand(0,1)*(personalBest - position) +
+                globalFactor*rand(0,1)*(globalBest - position))
+where phi = personalFactor + globalFactor
+and constrictionFactor = 2 / abs(2 - phi - sqrt(phi^2 - 4*phi))
+This constriction factor scales the entire velocity, acting similar to
+vmax and inertia but chosen based on personalBest and globalBest factors for
+optimal weighting.
+
+For neighbourhood-based updating, we chose a ring topology. Instead of using a
+global best value, each particle is only relayed information from its immediate
+neighbour to the right and left. We did this based on closest neighbours by index
+rather than finding the closest neighbours by position, for increased speed
+but similar results due to allowing opposing sides of the ring to explore
+significantly different neighbourhood maximums .
+
+For guaranteed convergence, the selected algorithm only modified the updating of
+the global best particle. All other particles operated as normal, but the global
+best was allowed to explore a random area around the minima it had already
+discovered, with a scaling factor that increased or decreased exploration based
+on recent successes and failures of finding better minima. Many failures to find
+a more optimal solution would lead to a more restricted search, while more
+successes allows it to diverge more.
+This best particle was updated with a special function:
+velocity_new = inertia*velocity_old - currentPosition + personalBestPos +
+                convergenceFactor * uniformRandom(-1,1)
+where convergenceFactor is updated on each positon update round according to:
+convergenceFactor *= 2 if successes > successFactor
+convergenceFactor /= 2 if failures > failureFactor
+and is initially set to 1.
+The count of failures and successes is updated each time fitness is calculated,
+with the count being restarted if a new best particle is found, and with
+fails/successes being updated according to whether a better value was found.
+
+In order to use 10 random seeds, we simply ran the main program loop 10 times
+with a new random seed set before each run.
+
+SOURCES USED:
+
+http://www.softcomputing.net/nabic11_7.pdf
+https://svn-d1.mpi-inf.mpg.de/AG1/MultiCoreLab/papers/EbehartShi00%20-%20Inertia%20Weights%20and%20Construction%20Factors.pdf
+https://svn-d1.mpi-inf.mpg.de/AG1/MultiCoreLab/papers/KennedyMendes02%20-%20Population%20Structure%20and%20PSO.pdf
+https://www.researchgate.net/publication/221616406_A_Comparative_Study_of_Neighborhood_Topologies_for_Particle_Swarm_Optimizers
+http://www.swarmintelligence.org/tutorials.php
