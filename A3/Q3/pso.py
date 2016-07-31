@@ -111,11 +111,79 @@ class swarmParticle:
          inertia*self.velocity[1] - self.position[1] + self.personalBestPos[1] + newConvergenceFactor*randomY))
         return newConvergenceFactor
 
+#for 10 random seeds for GCPSO
+for i in range(10):
+    iterations = 0
+    particle_list = []
+    globalBest = 0
+    globalBestPos = (0,0)
+    population = 150
+    random.seed(i)
+
+    #print(constrictionFactor)
+    for particle in range(0, population):
+        particle_list.append(swarmParticle())
+
+    while iterations < 10000:
+        #EVALUTATE FITNESS
+        for particle in particle_list:
+            fitness = calculate_fitness(particle)
+            #COMPARE AND UPDATE BEST RESULTS
+            if fitness < particle.personalBest:
+                particle.personalBest = fitness
+                particle.personalBestPos = particle.position
+            if fitness < globalBest:
+                #GUARANTEED CONVERGENCE
+                """if particle != bestParticle:
+                    failures = 0
+                    successes = 0
+                    bestParticle = particle
+                else:
+                    if fitness < bestParticle.personalBest:
+                        successes += 1
+                    else:
+                        failures += 1"""
+                globalBest = fitness
+                globalBestPos = particle.position
+                #print(particle.velocity)
+        #UPDATE
+        #NEIGHBOURHOOD BEST, EDGE VALUES
+        """lastIndex = len(particle_list) - 1
+        if particle_list[lastIndex].personalBest < particle_list[1].personalBest:
+            particle_list[0].update(particle_list[lastIndex].personalBestPos)
+        else:
+            particle_list[0].update(particle_list[1].personalBestPos)
+        if particle_list[lastIndex - 1].personalBest < particle_list[0].personalBest:
+            particle_list[lastIndex].update(particle_list[lastIndex-1].personalBestPos)
+        else:
+            particle_list[lastIndex].update(particle_list[0].personalBestPos)
+        for index in range(1, len(particle_list) - 1):
+            if particle_list[index-1].personalBest < particle_list[index+1].personalBest:
+                neighbourhoodBestPos = particle_list[index-1].personalBestPos
+            else:
+                neighbourhoodBestPos = particle_list[index+1].personalBestPos
+            particle_list[index].update(neighbourhoodBestPos)"""
+        #GUARANTEED CONVERGENCE
+        for particle in particle_list:
+            if particle==bestParticle:
+                convergenceFactor = particle.updateBest(globalBestPos, convergenceFactor)
+            else:
+                particle.update(globalBestPos)
+        #REGULAR
+        #for particle in particle_list:
+        #    particle.update(globalBestPos)
+        iterations+=1
+        if iterations%1000==0:
+            print("iteration: " + str(iterations) + " globalBest: " + str(globalBestPos) + ", val: " + str(globalBest))
+
+    print("seed#: " + str(i) + ", globalBest: " + str(globalBestPos) + ", val: " + str(globalBest))
+
 iterations = 0
 particle_list = []
 globalBest = 0
 globalBestPos = (0,0)
 population = 150
+
 #print(constrictionFactor)
 for particle in range(0, population):
     particle_list.append(swarmParticle())
