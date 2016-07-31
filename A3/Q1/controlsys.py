@@ -141,8 +141,8 @@ def genetic_algorithm(initialPop, finalGeneration):
 
         fits.append(currentPop[-1]['fit'])
 
-
     plt.plot(fits)
+    plt.show()
     return currentPop[-1]
 
 found = 0
