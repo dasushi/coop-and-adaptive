@@ -12,7 +12,7 @@ tiMax = 9.42
 tdMin = 0.26
 tdMax = 2.37
 size = 50
-total_gen = 150
+finalGeneration = 150
 pc = 0.6
 pm = 0.25
 
@@ -72,10 +72,8 @@ def crossover(lst):
     for i in range(0, len(lst) - 1, 2):
         mom = lst[i]
         dad = lst[i+1]
-
-        # Do a crossover
+        #only crossover randomly, with arithmetic crossover
         if random.random() < crossoverRate:
-            # Whole arithmetic crossover used
             #child 1
             K1 = alpha*mom[0][0] + (1-alpha)*dad[0][0]
             Ti1 = alpha*mom[0][1] + (1-alpha)*dad[0][1]
@@ -93,64 +91,56 @@ def crossover(lst):
     return final
 
 
-def mutate(lst):
-    final = []
+def mutateValues(lst):
+    results = []
 
     for item in lst:
         if random.random() < mutateRate:
-            # Uniform mutation is used
-            mut_rand = random.random()
-            k = 2 + mut_rand*(18 - 2)
-            ti = 1.05 + mut_rand*(9.42 - 1.05)
-            td = 0.26 + mut_rand*(2.37 - 0.26)
-
-            final.append({[k, ti, td], round(fitnessFunction(k, ti, td), 3)})
-
+            mutVal = random.random()
+            k = kMin + mutVal*(kMax - kMin)
+            ti = tiMin + mutVal*(tiMin - tiMin)
+            td = tdMin + mutVal*(tdMax - tdMin)
+            results.append({[k, ti, td], round(fitnessFunction(k, ti, td), 3)})
         else:
-            final.append(lst[i])
+            results.append(lst[i])
 
-    return final
+    return results
 
 
-def genetic_algorithm(initial_population, total_gen):
-
-    current_gen = 0
-    current_pop = sorted(initial_population, key= lambda x: x[1])
-
+def genetic_algorithm(initialPop, finalGeneration):
     fits = []
-    while current_gen < total_gen:
-        sum_fit = sum([x[1] for x in current_pop])
-        avg_prob = (sum([x[1]/sum_fit for x in current_pop]))/len(current_pop)
-        parent_pop = []
+    generation = 0
+    currentPop = sorted(initialPop, key= lambda x: x[1])
+    while generation < finalGeneration:
+        fitSum = sum([x[1] for x in currentPop])
+        averageProb = (sum([x[1]/fitSum for x in currentPop]))/len(currentPop)
+        parentPop = []
 
-        for sol in current_pop:
-            prob = sol[1]/sum_fit
-            expected_count = prob/avg_prob
-            actual_count = int(round(expected_count))
+        for sol in currentPop:
+            prob = sol[1]/fitSum
+            expectedCount = prob/averageProb
+            actualCount = int(round(expectedCount))
 
-            for i in range(actual_count):
-                parent_pop.append(sol)
+            for i in range(actualCount):
+                parentPop.append(sol)
 
-        random.shuffle(parent_pop)
-        cross_pop = crossover(parent_pop)
+        random.shuffle(parentPop)
+        crossPop = crossover(parentPop)
 
-        random.shuffle(cross_pop)
-        mutate_pop = sorted(mutate(cross_pop), key= lambda x: x[1])
+        random.shuffle(crossPop)
+        mutatePop = sorted(mutateValues(crossPop), key= lambda x: x[1])
 
-        best = mutate_pop[-1]
-        best_2 = mutate_pop[-2]
+        currentPop[0] = mutatePop[-1]
+        currentPop[1] = mutatePop[-2]
 
-        current_pop[0] = best
-        current_pop[1] = best_2
+        currentPop = sorted(currentPop, key= lambda x: x[1])
+        generation += 1
 
-        current_pop = sorted(current_pop, key= lambda x: x[1])
-        current_gen += 1
-
-        fits.append(current_pop[-1][1])
+        fits.append(currentPop[-1][1])
 
 
     plt.plot(fits)
-    return current_pop[-1]
+    return currentPop[-1]
 
 found = 0
 temp_list = []
@@ -166,4 +156,4 @@ while found < size: #populate list to desired size
         fitnessValue = fitness(k, ti, td)
         result_list.append({[k, ti, td], round(fitnessValue, 3)})
 
-print(genetic_algorithm(result_list, total_gen))
+print(genetic_algorithm(result_list, finalGeneration))
