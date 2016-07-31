@@ -110,10 +110,15 @@ def mutateValues(lst):
 def genetic_algorithm(initialPop, finalGeneration):
     fits = []
     generation = 0
-    currentPop = sorted(initialPop, key= lambda x: x[1])
+    import pdb
+    pdb.set_trace()
+    currentPop = sorted(initialPop, key= lambda x: x['fit'])
     while generation < finalGeneration:
-        fitSum = sum([x[1] for x in currentPop])
-        averageProb = (sum([x[1]/fitSum for x in currentPop]))/len(currentPop)
+        sumArray = []
+        for current in currentPop:
+            sumArray.append(current[1])
+        fitSum = sum(sumArray)
+        averageProb = (sum([x['fit']/fitSum for x in currentPop]))/len(currentPop)
         parentPop = []
 
         for sol in currentPop:
@@ -154,6 +159,7 @@ while found < size: #populate list to desired size
         found += 1
         temp_list.append([k, ti, td])
         fitnessValue = fitness(k, ti, td)
-        result_list.append({[k, ti, td], round(fitnessValue, 3)})
+        result_list.append({"params": [k, ti, td],
+                                "fit": round(fitnessValue, 3)})
 
 print(genetic_algorithm(result_list, finalGeneration))
